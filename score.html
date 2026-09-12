@@ -9,6 +9,7 @@
         <script>
             let loadNum = 0;
             let totalType = 0;
+            let table = [];
 
             function getDateByMode() {
                 switch (totalType) {
@@ -45,10 +46,18 @@
                 return dateObj.getFullYear() + '-' + String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + String(dateObj.getDate()).padStart(2, '0');
             }
 
-            function readTableByNum(num) {
-                let table = localStorage.getItem('table');
-                table = table ? JSON.parse(table) : [];
+            async function initData() {
+                try {
+                    const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/get');
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    table = await response.json();
+                    loadMore(30);
+                } catch (err) {
+                    alert(err);
+                }
+            }
 
+            function readTableByNum(num) {
                 let result = [];
 
                 // 遍历
@@ -63,8 +72,6 @@
             }
 
             function readTableByDate(date) {
-                let table = localStorage.getItem('table');
-                table = table ? JSON.parse(table) : [];
                 if (table.length == 0) {
                     return [];
                 }
@@ -83,22 +90,13 @@
                 return result;
             }
 
-            function writeToTable(name, point, reason) {
-                    // 读取数组
-                    let table = localStorage.getItem('table');
-                    table = table ? JSON.parse(table) : [];
-
-                    // 创建记录
-                    let one = {
-                        date: Math.floor(Date.now() / 86400000),
-                        name: name,
-                        point: point,
-                        reason: reason
-                    };
-
-                    // 存
-                    table.push(one);
-                    localStorage.setItem('table', JSON.stringify(table));
+            async function writeToTable(name, point, reason) {
+                try {
+                    const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/score?name=' + name + '&point=' + point + '&reason=' + reason);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                } catch (err) {
+                    alert(err);
+                }
             }
 
             function loadNew(num) {
@@ -321,7 +319,7 @@
             <tbody></tbody>
         </table>
         <script>
-            loadMore(30);
+            initData();
         </script>
     </body>
 </html>
