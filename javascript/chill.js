@@ -1,4 +1,4 @@
-var cold = [
+let cold = [
 '蓄电池的常用单位是A·h，说明该蓄电池曾发生安时之乱',
 '荆轲刺秦怎么不算一种螺旋赶君呢',
 '精卫这首歌每个人都会反复品味，因为忘了的人会成为忘精卫的人',
@@ -14,6 +14,5 @@ var cold = [
 ]
 
 function getColdJoke() {
-  var send = Math.floor(Date.now()/86400000)%cold.length;
-  return cold[send];
+  return cold[Math.floor(Date.now()/86400000)%cold.length];
 }
