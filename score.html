@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>高一（1）班小组量化考核</title>
+        <link rel="shortcut icon" href="D:\icon.ico" type="image/x-icon" />
+        <style>
+            .title {
+                display: flex;
+                align-items: center;
+                padding: 8px;
+            }
+            .title-end {
+                display: flex;
+                margin-left: auto;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 8px;
+            }
+            .button {
+                border-radius: 8px;
+                background-color: #dcd0ff;
+                margin: 4px;
+                padding: 0px 8px;
+                line-height: 1;
+            }
+            .button:hover {
+                background: #4a235a;
+                color: #FFFFFF;
+            }
+            tr:hover {
+                background: #f5f5ff;
+            }
+            input {
+                width: 100%;
+                margin: 8px;
+                box-sizing: border-box;
+            }
+            button {
+                margin: 8px;
+                border-radius: 4px;
+                background-color: #dcd0ff;
+            }
+            select {
+                padding: 4px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            th {
+                white-space: nowrap;
+                padding: 12px 16px;
+                text-align: left;
+            }
+            td {
+                white-space: nowrap;
+                padding: 12px 16px;
+                border-bottom: 2px solid #e0e0e0;
+            }
+            td:last-child {
+                width: 100%;
+                white-space: normal;
+            }
+            tr:last-child td {
+                border-bottom: none;
+            }
+            .cover {
+                position: fixed;
+                top: 0%;
+                left: 0%;
+                z-index: 999;
+                background: rgba(0,0,0,0.5);
+                width: 100%;
+                height: 100%;
+            }
+            .float {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                width: 70%;
+                max-height: 70%;
+                z-index: 9999;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+                padding: 12px;
+                overflow-y: auto;
+                animation: popIn 0.4s ease forwards;
+            }
+            @keyframes popIn {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.5);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+            }
+        </style>
+        <script>
+            let loadNum = 0;
+            let opened = false;
+            let totalType = 0;
+            
+            let group = {
+                "第一组": ["陈浩轩", "罗书瀚", "李佳燃", "鲍彦宏", "张益豪", "卢浩", "徐竞楠"],
+                "第二组": ["孟雨", "田子烨", "刘雨辰", "郑雅涵", "谭科旭", "阮漫妮", "郭霖君"],
+                "第三组": ["赵可乐", "焦翎禹", "邹锦弘", "关宇涵", "伍峻禾", "杜振缘"],
+                "第四组": ["朱济增", "梁晋博", "石义生", "孟贺依", "何悦鸣", "陈振宇"],
+                "第五组": ["朱家葆", "王思翰", "刘正熙", "罗贝尔", "代文杰", "吴予泽"],
+                "第六组": ["邓瑞林", "韩秉成", "朱嘉鑫", "徐铂雯", "黄新月", "尚弘羽霖"],
+                "第七组": ["王俊霖", "李浩", "周子涵", "朱蕙清", "张梦洁", "刘时来"],
+                "第八组": ["杨开燃", "田博飞", "程靖淞", "赵梓懿", "赵芳梅", "叶慧妍"]
+            };
+
+            function getDateByMode() {
+                switch (totalType) {
+                    case 0:    // 每日
+                        return Math.floor(new Date()/86400000);
+                    case 1:    // 每周
+                        return Math.floor((new Date()/86400000 + 3) / 7) * 7 - 3;
+                    case 2:    // 十五天内
+                        return Math.floor(new Date()/86400000) - 15;
+                    case 3:    // 本月
+                        return Math.floor(new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime() / 86400000);
+                    default:
+                        return 0;
+                }
+            }
+
+            function getDateStrByMode() {
+                switch (totalType) {
+                    case 0:
+                        return '今日';
+                    case 1:
+                        return '本周';
+                    case 2:
+                        return '十五天内';
+                    case 3:
+                        return '本月';
+                    default:
+                        return '';
+                }
+            }
+
+            function getDateStr(date) {
+                const dateObj = new Date(date * 86400000);
+                return dateObj.getFullYear() + '-' + String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + String(dateObj.getDate()).padStart(2, '0');
+            }
+            
+            function getGroupByName(name) {
+                for (let key in group) {
+                    if (group[key].includes(name)) {
+                        return key;
+                    }
+                }
+                
+                return '';
+            }
+
+            function readTableByNum(num) {
+                let table = localStorage.getItem('table');
+                table = table ? JSON.parse(table) : [];
+
+                let result = [];
+
+                // 遍历
+                for (let i = 0; i < num; i++) {
+                    if (table.length <= i) {
+                        break;
+                    }
+                    result.push(table[table.length - i - 1]);
+                }
+                
+                return result;
+            }
+
+            function readTableByDate(date) {
+                let table = localStorage.getItem('table');
+                table = table ? JSON.parse(table) : [];
+                if (table.length == 0) {
+                    return [];
+                }
+                
+                let result = [];
+
+                // 遍历
+                for (let i = 0; i < table.length; i++) {
+                    let one = table[table.length - i - 1];
+                    if (one.date < date) {
+                        break;
+                    }
+                    result.push(one);
+                }
+                
+                return result;
+            }
+
+            function writeToTable(name, point, reason) {
+                    // 读取数组
+                    let table = localStorage.getItem('table');
+                    table = table ? JSON.parse(table) : [];
+
+                    // 创建记录
+                    let one = {
+                        date: Math.floor(Date.now() / 86400000),
+                        name: name,
+                        point: point,
+                        reason: reason
+                    };
+
+                    // 存
+                    table.push(one);
+                    localStorage.setItem('table', JSON.stringify(table));
+            }
+            
+            function loadNew(num) {
+                loadNum = 0;
+                document.getElementById('tableView').querySelector('tbody').innerHTML = '';
+                loadMore(num);
+            }
+            
+            function loadMore(num) {
+                let lastMore = document.getElementById('more');
+                if (lastMore) {
+                    lastMore.remove();
+                }
+
+                let loaded = loadNum;
+                loadNum = loadNum + num;
+                let loadFinished = false;
+                let table = readTableByNum(loadNum);
+
+                if (table.length < loadNum) {
+                    loadNum = table.length;
+                    loadFinished = true;
+                }
+
+                let tableView = document.getElementById('tableView');
+
+                for (let i = loaded; i < loadNum; i++) {
+                    let one = table[i];
+
+                    if (!getGroupByName(one.name).trim()) {
+                        continue;
+                    }
+
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = '<td>' + getDateStr(one.date) + '</td><td>' + one.name + '</td><td>' + getGroupByName(one.name) + '</td><td>' + (one.point > 0 ? '+' : '') + one.point + '</td><td>' + one.reason;
+                    tableView.querySelector('tbody').appendChild(tr);
+                }
+
+                if (!loadFinished) {
+                    let more = document.createElement('p');
+                    more.id = 'more';
+                    more.onclick = function() {
+                        loadMore(30);
+                    };
+                    more.innerHTML = '加载更多';
+                    more.style.display = 'flex';
+                    more.style.justifyContent = 'center';
+                    document.body.appendChild(more);
+                }
+            }
+
+            function showAddWindow() {
+                let div = document.createElement('div');
+                let cover = document.createElement('div');
+                cover.className = "cover";
+                document.body.appendChild(cover);
+                div.className = "float";
+
+                let nameOptions = '<datalist id="names">';
+                for (let key in group) {
+                    let one = group[key];
+                    for (let i = 0; i < one.length; i ++) {
+                        nameOptions = nameOptions + '<option value="' + one[i] + '">';
+                    }
+                }
+                nameOptions = nameOptions + '</datalist>';
+                div.innerHTML = '<div style="padding: 1px;"><h4 style="padding: 0px;">请记录</h4></div><form onsubmit="record(event); return false;" id="newRecord"><div style="padding: 4px;"><label>名字</label><input type="text" name="name" list="names">' + nameOptions + '</div><div style="padding: 4px;"><label>分数（扣分用负数）</label><input type="number" name="point"></div><div style="padding: 4px;"><label>原因</label><input type="text" name="reason" list="options"><datalist id="options"><option value="上课/限时说小话"><option value="迟到"><option value="早读优秀"><option value="寝室问题"><option value="上课写无关作业"><option value="卫生打扫不合格"><option value="辱骂班干部"><option value="无故旷课"><option value="早退"><option value="携带违禁物品"><option value="上课睡觉"></datalist></div><button type="button" onclick="closeWindow()" style="margin-right: auto;">取消</button><button type="submit" style="margin-right: auto;">提交</button></form>';
+
+                document.body.appendChild(div);
+            }
+
+            function changeMode(sel) {
+                totalType = parseInt(sel.value) - 1;
+                closeWindow();
+                showTotalWindow();
+            }
+
+            function showTotalWindow() {
+                let div = document.createElement('div');
+                let cover = document.createElement('div');
+                cover.className = "cover";
+                document.body.appendChild(cover);
+                div.className = "float";
+                div.innerHTML = '<div class="title"><h4>高一（1）班小组分数汇总（' + getDateStrByMode() + '）</h4><div class="title-end"><select onchange="changeMode(this);"><option value="1">今日</option><option value="2">本周</option><option value="3">十五天内</option><option value="4">本月</option></select><div class="button" onclick="closeWindow()"><p>取消</p></div></div></div><table style="margin: 8px; width: 100%;"><thead><tr><th>组名</th><th>分数</th><th>原因</th></tr></thead><tbody></tbody></table>';
+                div.querySelector('select').value = '' + (totalType + 1);
+                let tablebody = div.querySelector('tbody');
+
+                let table = readTableByDate(getDateByMode());
+                let result = {};
+
+                for (let key in group) {
+                    result[key] = {point: 0, reason: ""};
+                }
+
+                for (let i = 0; i < table.length; i++) {
+                    let one = table[i];
+                    let group = getGroupByName(one.name);
+                    if (!(group in result)) {
+                        result[group] = {point: 0, reason: ""};
+                    }
+                    let oneObj = result[group];
+                    result[group] = {point: parseInt(oneObj.point) + parseInt(one.point), reason: oneObj.reason + one.name + '因' + one.reason + (parseInt(one.point) > 0 ? '得' + one.point : '扣' + ( - one.point)) + '分；'};
+                }
+
+                for (let key in group) {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = '<td>' + key +  '</td><td>' + result[key].point + '</td><td>' + result[key].reason + '</td>';
+                    tablebody.appendChild(tr);
+                }
+
+                document.body.appendChild(div);
+            }
+
+            function showControlWindow() {
+                let cover = document.createElement('div');
+                cover.className = "cover";
+                document.body.appendChild(cover);
+                let div = document.createElement('div');
+                div.className = "float";
+                div.innerHTML = '<div class="title"><h4>控制面板</h4><div class="title-end"><div class="button" onclick="closeWindow()"><p>取消</p></div></div></div><p onclick="exportTable();">导出配置</p><p onclick="importTable();">导入配置</p>';
+                document.body.appendChild(div);
+            }
+
+            /* function loadPwdWindow(func) {
+                let cover = document.createElement('div');
+                cover.className = "cover";
+                document.body.appendChild(cover);
+                let div = document.createElement('div');
+                div.className = "float";
+                div.innerHTML = '<div class="title"><h4>Please enter password: </h4><div class="title-end"><div class="button" onclick="closeWindow()"><p>取消</p></div></div></div>';
+                document.body.appendChild(div);
+            } */
+
+            function closeWindow() {
+                document.querySelector('.float:last-child').remove();
+                document.querySelector('.cover:last-child').remove();
+            }
+
+            function exportTable() {
+                let blob = new Blob([localStorage.getItem('table')], {type: 'text/plain;charset=utf-8' });
+                let url = URL.createObjectURL(blob);
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = 'table.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            function importTable() {
+                let input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+
+                input.onchange = function(e) {
+                    let file = e.target.files[0];
+                    if (!file) return;
+
+                    let reader = new FileReader();
+                    reader.onload = function(event) {
+                        const content = event.target.result;
+                        try {
+                            JSON.parse(content);
+                            localStorage.setItem('table', content);
+                            loadNew(30);
+                        } catch (e) {
+                            alert('文件有误，请检查文件内容');
+                        }
+                    };
+                    reader.readAsText(file, 'UTF-8');
+                };
+
+                input.click();
+            }
+
+            function record(e) {
+                e.preventDefault();
+
+                let form = document.getElementById('newRecord');
+                let name = form.name.value;
+                let point = form.point.value;
+                let reason = form.reason.value;
+
+                if (!name.trim() || !point || isNaN(point) || parseInt(point) === 0 || !reason.trim()) {
+                    alert('请完整填写！');
+                    return;
+                }
+                
+                if (!getGroupByName(name).trim()) {
+                    alert('名称不正确，请重新填写');
+                    return;
+                }
+                
+                writeToTable(name, point, reason);
+                closeWindow();
+                loadNew(30);
+            }
+        </script>
+    </head>
+    <body>
+        <div class="title">
+            <a href="https://lindows-pe.github.io/DongFeng-G2026-C1/"><img src="https://p.qlogo.cn/gh/1097133778/1097133778/100/" style="width: 48px; height: 48px; border-radius: 24px; padding: 8px; "></a>
+            <h1 style="font-weight: 900;">高一（1）班小组分数记录</h1>
+            <div class="title-end">
+                <div class="button" onclick="showAddWindow()">
+                    <p>添加记录</p>
+                </div>
+                <div class="button" onclick="showTotalWindow()">
+                    <p>查看汇总</p>
+                </div>
+                <div class="button" onclick="showControlWindow()">
+                    <p>管理面板</p>
+                </div>
+            </div>
+        </div>
+        <table id="tableView" style="margin: 8px; width: 100%;">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>名称</th>
+                    <th>组名</th>
+                    <th>分数</th>
+                    <th>原因</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script>
+            loadMore(30);
+        </script>
+    </body>
+</html>
