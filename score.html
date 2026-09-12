@@ -2,120 +2,13 @@
 <html lang="zh">
     <head>
         <meta charset="UTF-8">
-        <title>高一（1）班小组量化考核</title>
-        <link rel="shortcut icon" href="D:\icon.ico" type="image/x-icon" />
-        <style>
-            .title {
-                display: flex;
-                align-items: center;
-                padding: 8px;
-            }
-            .title-end {
-                display: flex;
-                margin-left: auto;
-                justify-content: flex-end;
-                align-items: center;
-                padding: 8px;
-            }
-            .button {
-                border-radius: 8px;
-                background-color: #dcd0ff;
-                margin: 4px;
-                padding: 0px 8px;
-                line-height: 1;
-            }
-            .button:hover {
-                background: #4a235a;
-                color: #FFFFFF;
-            }
-            tr:hover {
-                background: #f5f5ff;
-            }
-            input {
-                width: 100%;
-                margin: 8px;
-                box-sizing: border-box;
-            }
-            button {
-                margin: 8px;
-                border-radius: 4px;
-                background-color: #dcd0ff;
-            }
-            select {
-                padding: 4px;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                border-radius: 8px;
-                overflow: hidden;
-            }
-            th {
-                white-space: nowrap;
-                padding: 12px 16px;
-                text-align: left;
-            }
-            td {
-                white-space: nowrap;
-                padding: 12px 16px;
-                border-bottom: 2px solid #e0e0e0;
-            }
-            td:last-child {
-                width: 100%;
-                white-space: normal;
-            }
-            tr:last-child td {
-                border-bottom: none;
-            }
-            .cover {
-                position: fixed;
-                top: 0%;
-                left: 0%;
-                z-index: 999;
-                background: rgba(0,0,0,0.5);
-                width: 100%;
-                height: 100%;
-            }
-            .float {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                width: 70%;
-                max-height: 70%;
-                z-index: 9999;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-                padding: 12px;
-                overflow-y: auto;
-                animation: popIn 0.4s ease forwards;
-            }
-            @keyframes popIn {
-                0% {
-                    opacity: 0;
-                    transform: translate(-50%, -50%) scale(0.5);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1);
-                }
-            }
-        </style>
+        <title>高一（1）班小组量化考核系统</title>
+        <link rel="shortcut icon" href="icon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="./style/style.css">
+        <script src="javascript/data.js"></script>
         <script>
             let loadNum = 0;
-            let opened = false;
             let totalType = 0;
-            
-            let group = {
-                "第一组": ["陈浩轩", "罗书瀚", "李佳燃", "鲍彦宏", "张益豪", "卢浩", "徐竞楠"],
-                "第二组": ["孟雨", "田子烨", "刘雨辰", "郑雅涵", "谭科旭", "阮漫妮", "郭霖君"],
-                "第三组": ["赵可乐", "焦翎禹", "邹锦弘", "关宇涵", "伍峻禾", "杜振缘"],
-                "第四组": ["朱济增", "梁晋博", "石义生", "孟贺依", "何悦鸣", "陈振宇"],
-                "第五组": ["朱家葆", "王思翰", "刘正熙", "罗贝尔", "代文杰", "吴予泽"],
-                "第六组": ["邓瑞林", "韩秉成", "朱嘉鑫", "徐铂雯", "黄新月", "尚弘羽霖"],
-                "第七组": ["王俊霖", "李浩", "周子涵", "朱蕙清", "张梦洁", "刘时来"],
-                "第八组": ["杨开燃", "田博飞", "程靖淞", "赵梓懿", "赵芳梅", "叶慧妍"]
-            };
 
             function getDateByMode() {
                 switch (totalType) {
@@ -150,16 +43,6 @@
             function getDateStr(date) {
                 const dateObj = new Date(date * 86400000);
                 return dateObj.getFullYear() + '-' + String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + String(dateObj.getDate()).padStart(2, '0');
-            }
-            
-            function getGroupByName(name) {
-                for (let key in group) {
-                    if (group[key].includes(name)) {
-                        return key;
-                    }
-                }
-                
-                return '';
             }
 
             function readTableByNum(num) {
@@ -217,13 +100,13 @@
                     table.push(one);
                     localStorage.setItem('table', JSON.stringify(table));
             }
-            
+
             function loadNew(num) {
                 loadNum = 0;
                 document.getElementById('tableView').querySelector('tbody').innerHTML = '';
                 loadMore(num);
             }
-            
+
             function loadMore(num) {
                 let lastMore = document.getElementById('more');
                 if (lastMore) {
@@ -349,11 +232,6 @@
                 document.body.appendChild(div);
             } */
 
-            function closeWindow() {
-                document.querySelector('.float:last-child').remove();
-                document.querySelector('.cover:last-child').remove();
-            }
-
             function exportTable() {
                 let blob = new Blob([localStorage.getItem('table')], {type: 'text/plain;charset=utf-8' });
                 let url = URL.createObjectURL(blob);
@@ -416,8 +294,8 @@
     </head>
     <body>
         <div class="title">
-            <a href="https://lindows-pe.github.io/DongFeng-G2026-C1/"><img src="https://p.qlogo.cn/gh/1097133778/1097133778/100/" style="width: 48px; height: 48px; border-radius: 24px; padding: 8px; "></a>
-            <h1 style="font-weight: 900;">高一（1）班小组分数记录</h1>
+            <a href="index.html"><img src="https://p.qlogo.cn/gh/1097133778/1097133778/100/" style="width: 48px; height: 48px; border-radius: 24px; padding: 8px; "></a>
+            <h1 style="font-weight: 900;">高一（1）班小组量化考核系统</h1>
             <div class="title-end">
                 <div class="button" onclick="showAddWindow()">
                     <p>添加记录</p>
