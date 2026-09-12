@@ -95,7 +95,8 @@
                     table.push({
                         name: name,
                         point: point,
-                        reason: reason
+                        reason: reason,
+                        date: Math.floor(new Date()/86400000)
                     });
                     loadNew(30);
 
