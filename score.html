@@ -92,9 +92,15 @@
 
             async function writeToTable(name, point, reason) {
                 try {
+                    table.put({
+                        name: name,
+                        point: point
+                        reason: reason
+                    });
+                    loadNew(30);
+
                     const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/score?name=' + name + '&point=' + point + '&reason=' + reason);
                     if (!response.ok) throw new Error('HTTP ' + response.status);
-                    loadNew(30);
                 } catch (err) {
                     alert(err);
                 }
