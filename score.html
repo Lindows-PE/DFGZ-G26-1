@@ -51,7 +51,7 @@
                     const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/get');
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     table = await response.json();
-                    loadMore(30);
+                    loadNew(30);
                 } catch (err) {
                     alert(err);
                 }
@@ -90,18 +90,15 @@
                 return result;
             }
 
-            async function writeToTable(name, point, reason) {
+            async function writeToTable(name, point, reason, password) {
                 try {
-                    table.push({
-                        name: name,
-                        point: point,
-                        reason: reason,
-                        date: Math.floor(new Date()/86400000)
-                    });
-                    loadNew(30);
-
-                    const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/score?name=' + name + '&point=' + point + '&reason=' + reason);
+                    const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/score?name=' + name + '&point=' + point + '&reason=' + reason + '&password=' + password);
                     if (!response.ok) throw new Error('HTTP ' + response.status);
+                    if (response.status == 200) {
+                        initData();
+                    } else {
+                        throw new Error(response.message);
+                    }
                 } catch (err) {
                     alert(err);
                 }
@@ -171,7 +168,7 @@
                     }
                 }
                 nameOptions = nameOptions + '</datalist>';
-                div.innerHTML = '<div style="padding: 1px;"><h4 style="padding: 0px;">请记录</h4></div><form onsubmit="record(event); return false;" id="newRecord"><div style="padding: 4px;"><label>名字</label><input type="text" name="name" list="names">' + nameOptions + '</div><div style="padding: 4px;"><label>分数（扣分用负数）</label><input type="number" name="point"></div><div style="padding: 4px;"><label>原因</label><input type="text" name="reason" list="options"><datalist id="options"><option value="上课/限时说小话"><option value="迟到"><option value="早读优秀"><option value="寝室问题"><option value="上课写无关作业"><option value="卫生打扫不合格"><option value="辱骂班干部"><option value="无故旷课"><option value="早退"><option value="携带违禁物品"><option value="上课睡觉"></datalist></div><button type="button" onclick="closeWindow()" style="margin-right: auto;">取消</button><button type="submit" style="margin-right: auto;">提交</button></form>';
+                div.innerHTML = '<div style="padding: 1px;"><h4 style="padding: 0px;">请记录</h4></div><form onsubmit="record(event); return false;" id="newRecord"><div style="padding: 4px;"><label>名字</label><input type="text" name="name" list="names">' + nameOptions + '</div><div style="padding: 4px;"><label>分数（扣分用负数）</label><input type="number" name="point"></div><div style="padding: 4px;"><label>原因</label><input type="text" name="reason" list="options"><datalist id="options"><option value="上课/限时说小话"><option value="迟到"><option value="早读优秀"><option value="寝室问题"><option value="上课写无关作业"><option value="卫生打扫不合格"><option value="辱骂班干部"><option value="无故旷课"><option value="早退"><option value="携带违禁物品"><option value="上课睡觉"></datalist></div><div style="padding: 4px;"><label>密码</label><input type="text" name="password"></div><button type="button" onclick="closeWindow()" style="margin-right: auto;">取消</button><button type="submit" style="margin-right: auto;">提交</button></form>';
 
                 document.body.appendChild(div);
             }
@@ -281,8 +278,9 @@
                 let name = form.name.value;
                 let point = form.point.value;
                 let reason = form.reason.value;
+                let password = form.password.value;
 
-                if (!name.trim() || !point || isNaN(point) || parseInt(point) === 0 || !reason.trim()) {
+                if (!name.trim() || !point || isNaN(point) || parseInt(point) === 0 || !reason.trim() || !password.trim()) {
                     alert('请完整填写！');
                     return;
                 }
@@ -292,7 +290,7 @@
                     return;
                 }
                 
-                writeToTable(name, point, reason);
+                writeToTable(name, point, reason, password);
                 closeWindow();
                 loadNew(30);
             }
@@ -309,9 +307,9 @@
                 <div class="button" onclick="showTotalWindow()">
                     <p>查看汇总</p>
                 </div>
-                <div class="button" onclick="showControlWindow()">
+                <!--<div class="button" onclick="showControlWindow()">
                     <p>管理面板</p>
-                </div>
+                </div>-->
             </div>
         </div>
         <table id="tableView" style="margin: 8px; width: 100%;">
