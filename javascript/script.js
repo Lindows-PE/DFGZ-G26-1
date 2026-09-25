@@ -3,9 +3,10 @@ function dialog(html_content){
     cover.className = "cover";
     document.body.appendChild(cover);
     let div = document.createElement('div');
-    div.className = "float";
+    div.className = "dialog";
     div.innerHTML = html_content;
     document.body.appendChild(div);
+    return div;
 }
 
 
