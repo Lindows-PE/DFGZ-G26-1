@@ -48,7 +48,7 @@
 
             async function initData() {
                 try {
-                    const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/get');
+                    const response = await fetch('https://dfgz2601.lindows.indevs.in/get');
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     table = await response.json();
                     loadNew(30);
@@ -92,7 +92,7 @@
 
             async function writeToTable(name, point, reason, password) {
                 try {
-                    const response = await fetch('https://dfgz202601.lindows-pe.workers.dev/score?name=' + name + '&point=' + point + '&reason=' + reason + '&password=' + password);
+                    const response = await fetch('https://dfgz2601.lindows.indevs.in/score?name=' + name + '&point=' + point + '&reason=' + reason + '&password=' + password);
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     if (response.status == 200) {
                         initData();
