@@ -5,15 +5,16 @@
     <title>我们班</title>
     <link rel="shortcut icon" href="icon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./style/style.css">
-    <script src="javascript/chill.js"></script>
-    <script src="javascript/data.js"></script>
+    <script src="javascript/tips.js"></script>
+    <script src="javascript/content.js"></script>
+    <script src="javascript/script.js"></script>
   </head> 
   <body>
     <div class="title">
-      <div class="edge" style="width: 20px; height: 48px;"></div>
+      <div class="edge" style="width: 18px; height: 48px;"></div>
       <h1 style="font-size: 48px;">我们班</h1>
       <div class="title-end">
-        <div class="button">
+        <!-- <div class="button">
           <a href="score.html">
             <svg class="icon" viewBox="0 0 1024 1024">
               <path d="M597.333333 938.666667h-106.666666c-12.8 0-21.333333-8.533333-21.333334-21.333334v-106.666666c0-6.4 2.133333-10.666667 6.4-14.933334l320-320c8.533333-8.533333 21.333333-8.533333 29.866667 0l106.666667 106.666667c8.533333 8.533333 8.533333 21.333333 0 29.866667l-320 320c-4.266667 4.266667-8.533333 6.4-14.933334 6.4z m-85.333333-42.666667h76.8l298.666667-298.666667-76.8-76.8-298.666667 298.666667V896zM334.933333 938.666667H106.666667c-12.8 0-21.333333-8.533333-21.333334-21.333334V106.666667c0-12.8 8.533333-21.333333 21.333334-21.333334h682.666666c12.8 0 21.333333 8.533333 21.333334 21.333334v256c0 12.8-8.533333 21.333333-21.333334 21.333333s-21.333333-8.533333-21.333333-21.333333V128H128v768h206.933333c12.8 0 21.333333 8.533333 21.333334 21.333333s-10.666667 21.333333-21.333334 21.333334z"></path>
@@ -21,13 +22,54 @@
               <path d="M597.333333 426.666667c-12.8 0-21.333333-8.533333-21.333333-21.333334v-170.666666c0-12.8 8.533333-21.333333 21.333333-21.333334s21.333333 8.533333 21.333334 21.333334v170.666666c0 12.8-8.533333 21.333333-21.333334 21.333334z"></path>
             </svg>
           </a>
-        </div>
+        </div> -->
+      </div>
+    </div>
+    <div id="chill" style=""></div>
+    <div style="width: 100%; flex-direction: column;" class="scroll_animated">
+      <div style="flex-direction: column; padding-bottom: 48px;">
+        <h3 class="split-title">简介</h3>
+        <div class="edge" style="width: 90px; height: 18px;"></div>
+      </div>
+      <div class="card">
+        <p>我们高一（1）班是一个追求卓越的班级。</p>
+        <img class="image-right" src="./img/img_1789741856337"/>
+      </div>
+      <div style="flex-direction: column; padding-bottom: 48px;">
+        <h3 class="split-title">时间线</h3>
+        <div class="edge" style="width: 126px; height: 18px;"></div>
       </div>
     </div>
     <script>
-      let chill = document.createElement('p');
-      chill.innerHTML = getColdJoke();
-      document.body.appendChild(chill);
-    </script> 
+      // 加载冷笑话
+      let chill = document.getElementById('chill');
+      chill.innerHTML = '<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M394.5472 864.2048c0 21.5552 17.6128 39.168 39.168 39.168h156.5184c21.504 0 39.168-17.6128 39.168-39.168v-39.1168H394.5472v39.1168M512 120.6272a273.9712 273.9712 0 0 0-273.9712 273.9712c0 93.1328 46.592 175.1552 117.3504 224.6656v88.4224c0 21.5552 17.664 39.168 39.168 39.168h234.8544c21.504 0 39.1168-17.6128 39.1168-39.168v-88.4224a273.5616 273.5616 0 0 0 117.4528-224.6656A273.9712 273.9712 0 0 0 512 120.6272m111.7696 434.432l-33.536 23.296v90.2144H433.7152V578.56l-33.536-23.296a196.1984 196.1984 0 0 1-83.8656-160.4608A196.096 196.096 0 0 1 512 199.0656a195.9936 195.9936 0 0 1 195.6864 195.7376 195.7888 195.7888 0 0 1-83.9168 160.256" fill="#000000"></path></svg><p style="white-space: nowrap; margin-left: 8px;">' + getTips() + '</p><div></div>';
+
+      // 加载动画
+      const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // 容器进入屏幕
+                    const group = entry.target;
+                    Array.from(group.children).forEach((child, index) => {
+                        setTimeout(() => {
+                            child.classList.add('show');
+                        }, index * 150);  // 每个延迟 150ms
+                    });
+
+                    // 只触发一次
+                    observer.unobserve(group);
+                }
+            });
+        }, {
+            threshold: 0.5,  // 容器 50% 可见时触发
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // ===== 观察所有动画容器 =====
+        document.querySelectorAll('.scroll_animated').forEach(group => {
+            observer.observe(group);
+        });
+    </script>
   </body>
 </html>
