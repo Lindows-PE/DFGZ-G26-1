@@ -166,12 +166,12 @@
 
             function changeMode(sel) {
                 totalType = parseInt(sel.value) - 1;
-                closeWindow();
+                closeDialog();
                 showTotalWindow();
             }
 
             function showTotalWindow() {
-                let div = dialog('<div class="title"><h4>高一（1）班小组分数汇总（' + getDateStrByMode() + '）</h4><div class="title-end"><select onchange="changeMode(this);"><option value="1">今日</option><option value="2">本周</option><option value="3">十五天内</option><option value="4">本月</option></select><div class="button" onclick="closeDialog()"><p>取消</p></div></div></div><table style="margin: 8px; width: 100%;"><thead><tr><th>组名</th><th>分数</th><th>原因</th></tr></thead><tbody></tbody></table>');
+                let div = dialog('<div class="title" style="padding-top: 96px"><h4>高一（1）班小组分数汇总（' + getDateStrByMode() + '）</h4><div class="title-end"><select onchange="changeMode(this);"><option value="1">今日</option><option value="2">本周</option><option value="3">十五天内</option><option value="4">本月</option></select><div class="button" onclick="closeDialog()"><p>取消</p></div></div></div><table style="margin: 8px; width: 100%;"><thead><tr><th>组名</th><th>分数</th><th>原因</th></tr></thead><tbody></tbody></table>');
                 div.querySelector('select').value = '' + (totalType + 1);
                 let tablebody = div.querySelector('tbody');
 
